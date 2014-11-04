@@ -5,6 +5,8 @@ import org.einherjer.sample.repository.AssetRepository;
 import org.einherjer.sample.service.exception.AssetNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,17 +20,17 @@ public class AssetService {
 	
 	
 	@Transactional(readOnly=true)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("permitAll")
     public Iterable<Asset> findAll() {
     	return this.repository.findAll();
     }
     @Transactional(readOnly=true)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("isAuthenticated")
     public Asset get(Long tenantId) {
     	return repository.getOne(tenantId);
     }
     @Transactional(readOnly=true)
-    @PreAuthorize("permitAll")
+    @PreAuthorize("isAuthenticated")
     public Asset findByCode(String code) {
     	return repository.findByCode(code);
     }
@@ -69,6 +71,7 @@ public class AssetService {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void delete(Long tenantId) throws AssetNotFoundException {
     	Asset tenant = this.get(tenantId);
+    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	if (tenant == null) {
     		throw new AssetNotFoundException(tenantId);
     	}

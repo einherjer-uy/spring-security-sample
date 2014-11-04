@@ -22,4 +22,6 @@
 	
 	<bean id="authenticationEntryPoint" class="org.einherjer.sample.security.RestAuthenticationEntryPoint" />
 	
+	<sec:global-method-security pre-post-annotations="enabled"/>
+	
 </beans>
