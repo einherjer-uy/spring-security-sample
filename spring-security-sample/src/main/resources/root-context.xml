@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/security   http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans      http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util       http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/tx         http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/context    http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/data/jpa   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+		http://www.springframework.org/schema/jdbc       http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+	<context:component-scan base-package="org.einherjer.sample" >
+		<context:exclude-filter type="regex" expression="org.einherjer.sample.controller" />
+	</context:component-scan>
+	
+	<context:property-placeholder location="${mvn.sample.properties.location}"/> 
+    
+    <jpa:repositories base-package="org.einherjer.sample.repository"/>
+	
+	<tx:annotation-driven />
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="org.einherjer.sample.model" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="database" value="HSQL" />
+				<property name="generateDdl" value="true" />
+				<property name="showSql" value="true" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+	            <prop key="hibernate.show_sql">true</prop>
+	            <prop key="hibernate.format_sql">true</prop>
+	            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+	        </props>
+		</property>
+	</bean>
+	
+	<jdbc:embedded-database id="dataSource" type="HSQL"/>
+	
+	<import resource="security-config.xml" />
+	                   
+</beans>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<sec:http entry-point-ref="authenticationEntryPoint" create-session="stateless" use-expressions="true"
+			authentication-manager-ref="userinfoAuthManager"
+			pattern="/api/**">
+		<sec:intercept-url pattern="/api/**" access="isAuthenticated()" />
+		<sec:http-basic />
+	</sec:http>
+   <sec:authentication-manager id="userinfoAuthManager" alias="userinfoAuthManager">
+   	  <sec:authentication-provider>
+   	  	<sec:user-service>
+   	  		<sec:user name="user" password="pass" authorities="ROLE_USER"/>
+   	  		<sec:user name="admin" password="pass" authorities="ROLE_ADMIN"/>
+   	  	</sec:user-service>
+   	  </sec:authentication-provider>
+   </sec:authentication-manager>
+	
+	<bean id="authenticationEntryPoint" class="org.einherjer.sample.security.RestAuthenticationEntryPoint" />
+	
+</beans>
